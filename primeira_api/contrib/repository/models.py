@@ -1,0 +1,3 @@
+from primeira_api.categorias.models import CategoriaModel
+from primeira_api.atleta.models import AtletaModel
+from primeira_api.centro_treinamento.models import CentroTreinamentoModel
