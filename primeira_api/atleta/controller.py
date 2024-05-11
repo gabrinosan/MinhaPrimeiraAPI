@@ -4,7 +4,7 @@ from fastapi import APIRouter, Body, HTTPException, status
 from pydantic import UUID4
 from sqlalchemy.future import select
 from primeira_api.atleta.models import AtletaModel
-from primeira_api.atleta.schemas import AtletaIn, AtletaOut, AtletaUpdate
+from primeira_api.atleta.schemas import AtletaIn, AtletaOut, AtletaOut1, AtletaUpdate
 from primeira_api.categorias.models import CategoriaModel
 from primeira_api.centro_treinamento.models import CentroTreinamentoModel
 from primeira_api.contrib.dependencies import DatabaseDependency
@@ -15,7 +15,7 @@ router = APIRouter()
     '/', 
     summary='Criar um novo atleta',
     status_code=status.HTTP_201_CREATED,
-    response_model=AtletaOut
+    response_model=AtletaOut1
 )
 
 async def post(
@@ -32,7 +32,7 @@ async def post(
     if not categoria:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, 
-            detail=(f'A categoria {categoria_name} não foi econtrada')
+            detail=(f'A categoria {categoria_name} não foi encontrada')
         )
     
     
@@ -47,8 +47,7 @@ async def post(
         )
     
     try:
-
-        atleta_out = AtletaOut(id=uuid4(), created_at=datetime.utcnow(), **atleta_in.model_dump())
+        atleta_out = AtletaOut1(id=uuid4(), created_at=datetime.utcnow(), **atleta_in.model_dump())
         atleta_model = AtletaModel(**atleta_out.model_dump(exclude={'categoria', 'centro_treinamento'}))
         atleta_model.categoria_id = categoria.pk_id
         atleta_model.centro_treinamento_id = centro_treinamento.pk_id
@@ -58,8 +57,8 @@ async def post(
 
     except Exception: #parte do desafio
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail=('Ocorreu um erro ao inserir os dados no banco')
+            status_code=status.HTTP_304_NOT_MODIFIED,
+            # detail=('O CPF informado já está cadastrado')
         )
 
     return atleta_out

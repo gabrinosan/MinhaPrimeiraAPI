@@ -17,7 +17,12 @@ class Atleta(BaseSchema):
 class AtletaIn(Atleta):
     pass
 
-class AtletaOut(Atleta, OutMixin):
+class AtletaOut(OutMixin):
+    nome: Annotated[str, Field(description='Nome do atleta', example='Joao', max_length=50)]
+    cpf: Annotated[str, Field(description='CPF do atleta', example='12345678999', max_length=11)]
+    pass
+
+class AtletaOut1(Atleta, OutMixin):
     pass
 
 class AtletaUpdate(BaseSchema):

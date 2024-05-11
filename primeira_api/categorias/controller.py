@@ -20,11 +20,18 @@ async def post(
     categoria_in: CategoriaIn = Body(...)
 ) -> CategoriaOut:
     
-    categoria_out = CategoriaOut(id=uuid4(), **categoria_in.model_dump())
-    categoria_model = CategoriaModel(**categoria_out.model_dump())
-    
-    db_session.add(categoria_model)
-    await db_session.commit()
+    try:
+        categoria_out = CategoriaOut(id=uuid4(), **categoria_in.model_dump())
+        categoria_model = CategoriaModel(**categoria_out.model_dump())
+        
+        db_session.add(categoria_model)
+        await db_session.commit()
+
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_304_NOT_MODIFIED, 
+            # detail=(f'A categoria já existe')
+        )
 
     return categoria_out
 
